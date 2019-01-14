@@ -1,0 +1,11 @@
+.el-button{
+    outline: none;
+    border: none;
+    background-color: transparent;
+}
+.el-button:hover{
+    background-color: transparent;
+}
+.is-always-shadow{
+    margin: 10px 20px 0 20px;
+}

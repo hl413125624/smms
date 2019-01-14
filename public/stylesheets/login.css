@@ -1,0 +1,42 @@
+/*卡片样式*/
+.text {
+    font-size: 14px;
+}
+
+.item {
+    margin-bottom: 18px;
+}
+
+.clearfix:before,
+.clearfix:after {
+    display: table;
+    content: "";
+}
+.clearfix:after {
+    clear: both
+}
+#app img{
+    width: auto;
+    height: auto;
+   min-width: 100%;
+    min-height: 100%;g6
+}
+.box-card {
+    width: 480px;
+}
+.el-card__header{
+    padding: 5px 15px;
+}
+.box-card{
+    height: 300px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    right: 0;
+    margin: auto;
+    background: rgba(50,100,100,.2);
+}
+.el-input{
+    width: 300px;
+}

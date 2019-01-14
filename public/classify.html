@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <script src="/users/cheack"></script>
+</head>
+<body>
+<div id="app">
+    <el-card class="box-card">
+        <div slot="header" class="clearfix">
+            <h2>分类管理</h2>
+        </div>
+        <div class="text item">
+            <el-form :model="ruleForm2" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm" label-position="top">
+                <el-form-item label="所属分类" prop="cg_fatherID">
+                    <el-select v-model="ruleForm2.cg_fatherID" placeholder="请选择父级分类">
+                        <el-option label="顶级分类" value="0">---顶级分类---</el-option>
+                        <el-option v-for="(c,index) in categoryList"
+                                   :key="index" :label="c.cg_name" :value="c.cg_id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="分类名称" prop="cg_name">
+                    <el-input v-model="ruleForm2.cg_name"></el-input>
+                </el-form-item>
+                <el-form-item label="状态" prop="cg_isLocked">
+                    <el-radio-group v-model="ruleForm2.cg_isLocked">
+                        <el-radio label="1">启用</el-radio>
+                        <el-radio label="0">禁用</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="submitForm('ruleForm')">添加</el-button>
+                </el-form-item>
+            </el-form>
+
+
+        </div>
+
+    </el-card>
+
+
+</div>
+<!--引入jq-->
+<script src="./javascripts/jquery.min.js"></script>
+<!--引入vue-->
+<script src="./javascripts/vue.min.js"></script>
+<!--引入elementUI-->
+<link rel="stylesheet" href="./stylesheets/elementui.css">
+<script src="./javascripts/elementui.js"></script>
+<!-- 重置样式-->
+<link rel="stylesheet" href="./stylesheets/reset.css">
+<!--index样式-->
+<link rel="stylesheet" href="./stylesheets/index.css">
+
+
+
+<script>
+    new Vue({
+        //挂在视图
+        el: "#app",
+        data() {
+
+            return {
+
+                ruleForm2: {
+                    cg_name: '',
+                    cg_fatherID: '',
+                    cg_isLocked: '0'
+
+                },
+                categoryList:[],
+                rules: {
+                    cg_name: [
+                        { required: true, message: '请输入分类名称', trigger: 'blur' },
+
+                    ],
+                    cg_fatherID: [
+                        { required: true, message: '请选择所属分类', trigger: 'change' }
+                    ]
+                }
+            };
+        },
+        mounted(){
+            $.get("/category/list",(result)=> {
+                //将回传的数据返回大下拉框中
+               this.categoryList=result;
+            })
+        },
+        methods: {
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                       console.log(this.ruleForm2);
+                        $.post("/category/add",this.ruleForm2,function (rusult) {
+                           if(rusult.isOK){
+                              if (confirm("是否继续添加?")){
+                                  location.reload();
+                              }else {
+                                  location.href="sortmanag.html"
+                              }
+                           }else {
+                              alert(rusult.msg)
+
+                           }
+                        })
+                    } else {
+                        console.log('error submit!!');
+                return false;
+            }
+            });
+            },
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            }
+        }
+
+    })
+</script>
+
+</body>
+</html>

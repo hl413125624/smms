@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <script src="/users/cheack"></script>
+</head>
+<body>
+<div id="app">
+    <el-card class="box-card">
+        <div slot="header" class="clearfix">
+            <h2>管理账号</h2>
+        </div>
+        <div class="text item">
+            <template>
+                <el-table
+                        :data="tableData"
+                        style="width: 100%">
+                    <el-table-column
+                            label="用户名">
+                        <template slot-scope="scope">
+                            <span style="margin-left: 10px">{{ scope.row.userName }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="密码">
+                        <template slot-scope="scope">
+                            <span style="margin-left: 10px">{{ scope.row.userPwd }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="分组">
+                        <template slot-scope="scope">
+                            <span style="margin-left: 10px">{{ scope.row.userGroup }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button
+                                    size="mini"
+                                    @click="handleEdit(scope.$index, scope.row)"><i class="el-icon-edit"></i>编辑</el-button>
+                            <el-button
+                                    size="mini"
+                                    type="danger"
+                                    @click="handleDelete(scope.$index, scope.row)"><i class="el-icon-delete"></i>删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </template>
+
+
+        </div>
+
+    </el-card>
+
+
+</div>
+<!--引入jq-->
+<script src="./javascripts/jquery.min.js"></script>
+<!--引入vue-->
+<script src="./javascripts/vue.min.js"></script>
+<!--引入elementUI-->
+<link rel="stylesheet" href="./stylesheets/elementui.css">
+<script src="./javascripts/elementui.js"></script>
+<!-- 重置样式-->
+<link rel="stylesheet" href="./stylesheets/reset.css">
+    <!--index样式-->
+<link rel="stylesheet" href="./stylesheets/index.css">
+
+
+<script>
+    new Vue({
+        //挂在视图
+        el: "#app",
+        data() {
+            return {
+                tableData: "",
+            }
+        },
+        methods: {
+            handleEdit(index,row) {
+//                console.log(row.u_id);
+                var id=row.u_id;
+          location.href="iTunes_edit.html?id="+id;
+            },
+            handleDelete(index,row) {
+               $.get('/users/deleter',row,function (result) {
+                   if (result.affectedRows===1)
+                   {
+                       location.href="account.html"
+                   }
+
+               })
+            }
+
+
+
+            },
+        created:function () {
+            var url="/users/list";
+            var _self=this;
+            $.get(url,function (data) {
+                _self.tableData=eval(data)
+            })
+        }
+    })
+</script>
+
+</body>
+</html>

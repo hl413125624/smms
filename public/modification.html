@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <script src="/users/cheack"></script>
+</head>
+<body>
+<div id="app">
+    <el-card class="box-card">
+        <div slot="header" class="clearfix">
+            <h2>密码修改</h2>
+        </div>
+        <div class="text item">
+
+            <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
+                <el-form-item label="原密码" prop="origpass">
+                    <el-input  type="password" v-model="ruleForm2.origpass"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" prop="pass">
+                    <el-input type="password" v-model="ruleForm2.pass" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="确认密码" prop="checkPass">
+                    <el-input type="password" v-model="ruleForm2.checkPass" autocomplete="off"></el-input>
+                </el-form-item>
+
+                <el-form-item>
+                    <el-button type="primary" @click="submitForm('ruleForm2')">修改</el-button>
+
+                </el-form-item>
+            </el-form>
+
+
+        </div>
+
+    </el-card>
+
+
+</div>
+<!--引入jq-->
+<script src="./javascripts/jquery.min.js"></script>
+<!--引入vue-->
+<script src="./javascripts/vue.min.js"></script>
+<!--引入elementUI-->
+<link rel="stylesheet" href="./stylesheets/elementui.css">
+<script src="./javascripts/elementui.js"></script>
+<!-- 重置样式-->
+<link rel="stylesheet" href="./stylesheets/reset.css">
+<!--index样式-->
+<link rel="stylesheet" href="./stylesheets/index.css">
+<link rel="stylesheet" href="./stylesheets/modification.css">
+
+
+<script>
+    new Vue({
+        //挂在视图
+        el: "#app",
+        data() {
+            var validatePass2 = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请再次输入密码'));
+                } else if (value !== this.ruleForm2.pass) {
+                    callback(new Error('两次输入密码不一致!'));
+                } else {
+                    callback();
+                }
+            };
+            return {
+                ruleForm2: {
+                    pass: '',
+                    checkPass: '',
+                    origpass: ''
+                },
+                rules2: {
+                    pass: [
+                        { required:true,message:'请输入新密码',trigger:'blur' },
+                        {min:6,max:12,message:'请输入6-12位的密码',trigger:'blur' }
+                    ],
+                    checkPass: [
+                        { required:true,message:'请确认新密码',trigger:'blur' },
+                        {min:6,max:12,message:'请再次确认修改密码',trigger:'blur' },
+                        { validator: validatePass2, trigger: 'blur' }
+                    ],
+                    origpass: [
+                        { required:true,message:'请输入原密码',trigger:'blur' },
+                        {min:6,max:12,message:'请输入6-12位的原密码',trigger:'blur' }
+                    ]
+                }
+            };
+        },
+        methods: {
+            submitForm(formName) {
+
+                $.post('/users/org',this.ruleForm2,function (reasult) {
+                    console.log(reasult)
+                })
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                       console.log('submit!');
+                    } else {
+                        console.log('error submit!!');
+                return false;
+            }
+            });
+            },
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

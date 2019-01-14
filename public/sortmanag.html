@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <script src="/users/cheack"></script>
+</head>
+<body>
+<div id="app">
+    <el-card class="box-card">
+        <div slot="header" class="clearfix">
+            <h2>分类管理</h2>
+        </div>
+        <div class="text item">
+            <template>
+
+                <el-table :data="tableData"  style="width: 100%">
+                    <el-table-column prop="cg_id" label="编号">
+
+                    </el-table-column>
+                    <el-table-column prop="cg_fatherID" label="所属分类">
+
+                    </el-table-column>
+
+                    <el-table-column prop="cg_name" label="分类名称"></el-table-column>
+
+                    <el-table-column prop="cg_isLocked" label="产品列表">
+
+                    </el-table-column>
+
+                    <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button
+                                    size="mini"
+                                    @click="handleEdit(scope.row)" type="success" plain icon="el-icon-search" circle>编辑</el-button>
+                            <el-button
+                                    size="mini"
+                                    type="danger"
+                                    @click="handleDelete(scope.row)" type="danger" plain icon="el-icon-delete" circle>删除</el-button>
+                        </template>
+                    </el-table-column>
+
+
+
+                </el-table>
+            </template>
+
+
+
+        </div>
+
+    </el-card>
+
+
+</div>
+<!--引入jq-->
+<script src="./javascripts/jquery.min.js"></script>
+<!--引入vue-->
+<script src="./javascripts/vue.min.js"></script>
+<!--引入elementUI-->
+<link rel="stylesheet" href="./stylesheets/elementui.css">
+<script src="./javascripts/elementui.js"></script>
+<!-- 重置样式-->
+<link rel="stylesheet" href="./stylesheets/reset.css">
+<!--index样式-->
+<link rel="stylesheet" href="./stylesheets/index.css">
+<link rel="stylesheet" href="./stylesheets/sortmanag.css">
+
+
+
+<script>
+    new Vue({
+        //挂在视图
+        el: "#app",
+        data() {
+            return {
+                tableData:[],
+            }
+        },
+        methods: {
+            //编辑数据
+            handleEdit(row) {
+
+                var id=row.good_id;
+                console.log(id);
+               location.href="Addthegoods_edit.html?id="+id;
+            },
+
+                //删除数据
+            handleDelete(row) {
+                console.log(row)
+             $.get("/category/deleterd",row,(result)=> {
+                    if(result.isOK){
+                    alert(result.msg);
+                    location.href="sortmanag.html"
+                }else {
+                    alert(result.msg)
+                }
+
+                })
+            }
+        },
+        mounted(){
+            $.get("/category/lister",(result)=> {
+               this.tableData=result;
+            })
+        }
+
+    })
+</script>
+
+</body>
+</html>

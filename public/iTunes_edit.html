@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>超市管理—修改密码</title>
+    <script src="/users/cheack"></script>
+</head>
+<body>
+<div id="app">
+    <el-card class="box-card">
+        <div slot="header" class="clearfix">
+            <h2>修改密码</h2>
+        </div>
+        <div class="text item">
+
+
+                    <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm" label-position="top">
+                        <el-form-item label="用户名" prop="username">
+                            <el-input v-model="ruleForm2.username"></el-input>
+                        </el-form-item>
+                        <el-form-item label="密码" prop="pass">
+                            <el-input type="password" v-model="ruleForm2.pass" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="确认密码" prop="checkPass">
+                            <el-input type="password" v-model="ruleForm2.checkPass" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="用户组" prop="region">
+                            <el-select v-model="ruleForm2.region" placeholder="请选择分组">
+                                <el-option label="超级管理员" value="超级管理员"></el-option>
+                                <el-option label="管理员" value="管理员"></el-option>
+                                <el-option label="用户" value="用户" width="300"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item>
+
+                            <el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
+                        </el-form-item>
+                    </el-form>
+
+        </div>
+
+    </el-card>
+
+
+</div>
+<!--引入jq-->
+<script src="./javascripts/jquery.min.js"></script>
+<!--引入vue-->
+<script src="./javascripts/vue.min.js"></script>
+<!--引入elementUI-->
+<link rel="stylesheet" href="./stylesheets/elementui.css">
+<script src="./javascripts/elementui.js"></script>
+<!-- 重置样式-->
+<link rel="stylesheet" href="./stylesheets/reset.css">
+    <!--index样式-->
+<link rel="stylesheet" href="./stylesheets/index.css">
+
+
+<script>
+    new Vue({
+        //挂在视图
+        el: "#app",
+        data() {
+            var validatePass2 = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请再次输入密码'));
+                } else if (value !== this.ruleForm2.pass) {
+                    callback(new Error('两次输入密码不一致!'));
+                } else {
+                    callback();
+                }
+            }
+            return {
+                ruleForm2: {
+                    pass: '',
+                    checkPass: '',
+                    username: '',
+                    region: '',
+                    u_id:0
+                },
+                rules2: {
+                    pass: [
+                        { required:true,message:'请输入密码',trigger:'blur' },
+                        {min:6,max:12,message:'请输入6-12位的密码',trigger:'blur' }
+                    ],
+                    checkPass: [
+                        { required:true,message:'请输入确认密码',trigger:'blur' },
+                        {min:6,max:12,message:'请输入6-12位的密码',trigger:'blur' },
+                        {validator:validatePass2,trigger:'blur'}
+                    ],
+                    username: [
+                        { required:true,message:'请输入账号',trigger:'blur' },
+                        {min:6,max:12,message:'请输入6-12位的账号',trigger:'blur' }
+                    ],
+                    region: [
+                        { required: true, message: '请选择用户组', trigger: 'change' }
+                    ]
+                }
+            };
+        },
+        methods: {
+            handleOpen(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            handleClose(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            submitForm(formName) {
+
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        $.post('/users/save',this.ruleForm2,function (result) {
+                            if (result.isOK){
+                                alert(result.msg);
+                                location.href="account.html"
+                            }
+                            else {
+                                alert(result.msg)
+                            }
+                        })
+                    } else {
+                return false;
+            }
+            });
+            }
+        },
+        mounted(){
+            //获取ip地址
+            let urldata=location.href;
+            let id=urldata.split("=")[1];
+            console.log(id);
+            //ajax传入后台
+            $.get("/users/editdata",{id},(datauser)=>{
+//                console.log(datauser)
+//                由于使用的是双向绑定所以改变模板就能改变数据
+                let dataer=datauser[0]
+                this. ruleForm2.username=dataer.userName;
+//                this. ruleForm2.pass=dataer.userPwd;
+//                this. ruleForm2.checkPass=dataer.userPwd;
+                this. ruleForm2.region=dataer.userGroup;
+            //回填表单是传入id
+               this.ruleForm2.u_id=dataer.u_id;
+            })
+
+
+        }
+    })
+</script>
+
+</body>
+</html>

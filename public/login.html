@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登陆页面</title>
+</head>
+<body>
+<div id="app">
+    <img src="./images/1.jpg" alt="">
+    <el-card class="box-card">
+        <div slot="header" class="clearfix">
+            <h2><i class="el-icon-setting"></i>超市用户登陆页面</h2>
+        </div>
+        <div class="text item">
+            <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
+                <el-form-item label="账户" prop="username">
+                    <el-input type="text" v-model="ruleForm2.username" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" prop="pws">
+                    <el-input type="password" v-model="ruleForm2.pws "autocomplete="off"></el-input>
+                </el-form-item>
+
+                <el-form-item>
+                    <el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
+                    <el-button @click="resetForm('ruleForm2')">重置</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+    </el-card>
+</div>
+<!--引入jq-->
+<script src="./javascripts/jquery.min.js"></script>
+<!--引入vue-->
+<script src="./javascripts/vue.min.js"></script>
+<!--引入elementUI-->
+<link rel="stylesheet" href="./stylesheets/elementui.css">
+<script src="./javascripts/elementui.js"></script>
+    <!--登陆框样式-->
+<link rel="stylesheet" href="./stylesheets/login.css">
+
+
+
+<script>
+    new Vue({
+        //挂在视图
+        el: "#app",
+        data() {
+            return {
+                ruleForm2: {
+                    username: '',
+                    pws: ''
+                },
+                rules2: {
+                    username: [
+                        { required: true, message: '请输入用户名', trigger: 'blur' },
+                        { min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur' }
+                    ],
+                    pws: [
+                        { required: true, message: '请输入密码', trigger: 'blur' },
+                        { min: 6, max: 12, message: '长度在 6 到 12 个字符', trigger: 'blur' }
+                    ]
+
+                }
+            };
+        },
+        methods: {
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+//                        console.log("账号"+this.ruleForm2.username,"密码"+this.ruleForm2.pws)
+                        $.post("/users/userpwd",this.ruleForm2,function (result) {
+                            if(result.isOK){
+                                alert(result.msg);
+                                location.href="index.html"
+                            }else {
+                                alert(result.msg)
+                            }
+                        })
+                    } else {
+                        console.log('error submit!!');
+                return false;//阻止浏览器默认提交
+            }
+            });
+            },
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            }
+        }
+
+
+    })
+</script>
+
+</body>
+</html>

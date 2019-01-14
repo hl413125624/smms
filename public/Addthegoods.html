@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>超市管理-添加商品</title>
+    <script src="/users/cheack"></script>
+<body>
+<div id="app">
+    <el-card class="box-card">
+        <div slot="header" class="clearfix">
+            <h2>添加商品</h2>
+        </div>
+        <div class="text item">
+            <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm" label-position="top">
+                <el-form-item label="所属分类" prop="cg_id">
+                    <el-select v-model="ruleForm2.cg_id" placeholder="请选择父级分类">
+                        <el-option label="顶级分类" value="0">---顶级分类---</el-option>
+                        <el-option v-for="(c,index) in categoryList"
+                                   :key="index" :label="c.cg_name" :value="c.cg_id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="商品条形码" prop="barcode">
+                    <el-input v-model="ruleForm2.barcode">
+                        <el-button type="primary" @click="submitForm('ruleForm2')">商品条形码</el-button></el-input>
+                </el-form-item>
+                <el-form-item label="商品名称" prop="goodsname">
+                    <el-input  v-model="ruleForm2.goodsname" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="商品进价" prop="goodsprice">
+                    <el-input v-model="ruleForm2.goodsprice" autocomplete="off" @blur="autoFillPrice()">
+
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="商品市场价" prop="marketprice">
+                    <el-input v-model="ruleForm2.marketprice" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="商品销售价" prop="saleprice">
+                    <el-input v-model="ruleForm2.saleprice" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="商品库存数量" prop="stockNum">
+                    <el-input v-model="ruleForm2.stockNum" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="商品重量" prop="weigth">
+                    <el-input v-model="ruleForm2.weigth" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="商品单位" prop="unit">
+                    <el-input v-model="ruleForm2.unit" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="会员优惠" prop="promotion">
+                    <el-radio-group v-model="ruleForm2.promotion">
+                        <el-radio label="1">享受</el-radio>
+                        <el-radio label="0">不享受</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="是否促销" prop="discount">
+                    <el-radio-group v-model="ruleForm2.discount">
+                        <el-radio label="1">启用</el-radio>
+                        <el-radio label="0">禁用</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                        <el-form-item label="商品详情" prop="goodsDetails">
+                            <el-input type="textarea" v-model="ruleForm2.goodsDetails"></el-input>
+                        </el-form-item>
+
+                        <el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
+
+                </el-form-item>
+            </el-form>
+
+
+
+        </div>
+
+    </el-card>
+
+
+</div>
+<!--引入jq-->
+<script src="./javascripts/jquery.min.js"></script>
+<!--引入vue-->
+<script src="./javascripts/vue.min.js"></script>
+<!--引入elementUI-->
+<link rel="stylesheet" href="./stylesheets/elementui.css">
+<script src="./javascripts/elementui.js"></script>
+<!-- 重置样式-->
+<link rel="stylesheet" href="./stylesheets/reset.css">
+    <!--index样式-->
+<link rel="stylesheet" href="./stylesheets/index.css">
+
+
+<script>
+    new Vue({
+        //挂在视图
+        el: "#app",
+        data() {
+            return {
+                ruleForm2: {
+                    cg_id:'',
+                    barcode: '',
+                    goodsname: '',
+                    goodsprice: '',
+                    marketprice: "0",
+                    saleprice:"0",
+                    stockNum:"0",
+                    weigth:"0",
+                    unit: '',
+                    promotion: '',
+                    discount: '',
+                    goodsDetails: ''
+                },
+                categoryList:[],
+                rules2: {
+                    cg_id:[
+                        {required: true, message: '选择所属分类', trigger: 'change'}
+
+                    ],
+                    barcode:[
+                        {required: true, message: '请输入商品条形码', trigger: 'blur'}
+
+                    ],
+                    goodsname:[
+                        {required: true, message: '请输入商品名称', trigger: 'blur'}
+
+                    ],
+                    goodsprice: [
+                        {required: true, message: '请输入商品进价', trigger: 'blur'},
+
+
+                    ],
+                    unit:[
+                        {required: true, message: '请输入商品单位', trigger: 'blur'}
+                    ],
+                    promotion:[
+                        {required: true, message: '请选择会员', trigger: 'change'}
+
+                    ],
+                    discount:[
+                        {required: true, message: '请选择是否促销', trigger: 'change'}
+                    ]
+                },
+                autoFillPrice(){
+                    this.ruleForm2.marketprice=(this.ruleForm2.goodsprice*2).toFixed(2);
+                    this.ruleForm2.saleprice=(this.ruleForm2.marketprice*0.9).toFixed(2);
+                }
+
+            }
+        },
+        methods: {
+            handleOpen(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            handleClose(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            submitForm(formName) {
+
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                 //发送Ajax到后台
+                     $.post("/goods/add",this.ruleForm2,function (result) {
+                        if (result.isOK){
+                           if (confirm("需要继续添加吗?")){
+                               location.reload();
+                           }else {
+                               location.href="commodity.html" ;
+                           }
+                        }else {
+                            alert(result.msg)
+                        }
+                     })
+                    } else {
+                        return false;
+            }
+            });
+            },
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            }
+
+        },
+        autoFillPrice(){
+            this.ruleForm2.marketprice=this.ruleForm2.goodsprice*2;
+            this.ruleForm2.saleprice=this.ruleForm2.marketprice*0.9;
+        },
+        mounted(){
+            $.get("/goods/lister",(result)=> {
+                //将回传的数据返回大下拉框中
+                this.categoryList=result;
+        })
+            this.ruleForm2.barcode=new Date().getTime();
+
+        }
+    })
+</script>
+
+</body>
+</html>
